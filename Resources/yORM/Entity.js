@@ -1,7 +1,7 @@
 var print = function(obj) {
 	Ti.API.info(obj);
 };
-var utils = ( function() {
+var yORMUtils = ( function() {
 	var api = {};
 	api.getValuesFromResultSet = function(rs, fields) {
 		var entity = this;
@@ -91,7 +91,7 @@ BaseEntity.prototype.all = function(clauses) {
 	var rsData = [];
 	var rslist = this.db.execute(selectAllSQL);
 	while(rslist.isValidRow()) {
-		var entity = utils.getValuesFromResultSet(rslist, this.fields);
+		var entity = yORMUtils.getValuesFromResultSet(rslist, this.fields);
 		rsData.push(entity);
 		rslist.next();
 	}
@@ -106,23 +106,23 @@ BaseEntity.prototype.find = function(id, clauses) {
 	print(findSQL);
 
 	var rs = this.db.execute(findSQL);
-	var entity = utils.getValuesFromResultSet(rs, this.fields);
+	var entity = yORMUtils.getValuesFromResultSet(rs, this.fields);
 	rs.close();
 	return entity;
 };
 
 BaseEntity.prototype.findBy = function(fieldsAndValues) {
-	var rs = utils.find(this.tableName, this.db, fieldsAndValues);
-	var entity = utils.getValuesFromResultSet(rs, this.fields);
+	var rs = yORMUtils.find(this.tableName, this.db, fieldsAndValues);
+	var entity = yORMUtils.getValuesFromResultSet(rs, this.fields);
 	rs.close()
 	return entity;
 };
 
 BaseEntity.prototype.findAllBy = function(fieldsAndValues) {
-	var rslist = utils.find(this.tableName, this.db, fieldsAndValues);
+	var rslist = yORMUtils.find(this.tableName, this.db, fieldsAndValues);
 	var rsData = [];
 	while(rslist.isValidRow()) {
-		var entity = utils.getValuesFromResultSet(rslist, this.fields);
+		var entity = yORMUtils.getValuesFromResultSet(rslist, this.fields);
 		rsData.push(entity);
 		rslist.next();
 	}
