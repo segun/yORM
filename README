@@ -12,45 +12,45 @@ This class serves as your Entity class (or a table in database).
 
 ###Sample Code
 
-####Include the single entity.js file
-`Ti.include('yORM/entity.js');`
+**Include the single entity.js file**
+> `Ti.include('yORM/entity.js');`
 
-####Declare a function like this
-`function UserEntity() {`
+**Declare a function like this**
+> `function UserEntity() {`
+> 
+> `};`
 
-`};`
+**Then extend BaseEntity like this**
+> `var dbName = "Your Database Name";`
+> 
+> `var tableName = "Your Table Name (used in the database)";`
+> 
+> `var fields = {`
+> 
+> `		'field1': 'SQLLite_DataType',`
+> 
+> `		'field2: 'SQLLite_DataType',`
+> 
+> `		'field3: 'SQLLite_DataType'`
+> 
+> `};`
+> 
+> `UserEntity.prototype = new BaseEntity(dbName, tableName, fields);`
+> 
+> `var user = new UserEntity();`
 
-####Then extend BaseEntity like this
-`var dbName = "Your Database Name";`
-
-`var tableName = "Your Table Name (used in the database)";`
-
-`var fields = {`
-
-`		'field1': 'SQLLite_DataType',`
-
-`		'field2: 'SQLLite_DataType',`
-
-`		'field3: 'SQLLite_DataType'`
-
-`};`
-
-`UserEntity.prototype = new BaseEntity(dbName, tableName, fields);`
-
-`var user = new UserEntity();`
-
-####The rest is easy
-`var user = new UserEntity();`
-
-`user.field1 = 'field1_value';`
-
-`user.field2 = 'field2_value';`
-
-`user.field2 = 'field3_value';`
-
-`user.save();`
-
-`Ti.API.info(user.id);`
+**The rest is easy**
+> `var user = new UserEntity();`
+> 
+> `user.field1 = 'field1_value';`
+> 
+> `user.field2 = 'field2_value';`
+> 
+> `user.field2 = 'field3_value';`
+> 
+> `user.save();`
+> 
+> `Ti.API.info(user.id);`
 
 
 Entity Methods.
