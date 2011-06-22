@@ -54,9 +54,29 @@ var BaseEntitySuite = {
 		assertEqual(user.name, BaseEntitySuite.user.name);
 		assertEqual(user.email, BaseEntitySuite.user.email);
 		assertEqual(user.id, BaseEntitySuite.user.id);
+		var user2 = BaseEntitySuite.user.find(1011001);
+		assertEqual(user2.name, null);
+		assertEqual(user2.age, null);
+		assertEqual(user2.email, null);
 	},
 	testFindBy: function() {
 		BaseEntitySuite.user.save();
-		BaseEntitySuite.user.findBy({'name' : 'Test Name', 'age' : 9});
+		BaseEntitySuite.user.save();
+		var user = BaseEntitySuite.user.findBy({
+			'name' : 'Test Name',
+			'age' : 19
+		});
+		assertEqual(user.name, BaseEntitySuite.user.name);
+		assertEqual(user.email, BaseEntitySuite.user.email);
+	},
+	testFindAllBy: function() {
+		BaseEntitySuite.user.save();
+		BaseEntitySuite.user.save();
+		BaseEntitySuite.user.save();
+		var allUsers = BaseEntitySuite.user.findAllBy({
+			'name' : 'Test Name',
+			'age' : 19
+		});
+		assertEqual(allUsers.length, 3);
 	}
 }

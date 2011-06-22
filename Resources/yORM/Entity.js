@@ -7,11 +7,24 @@ var utils = ( function() {
 		var entity = this;
 		entity.id = rs.fieldByName("id");
 		for(field in fields) {
+			print(rs.fieldByName(field));
 			var s = '(this.' + field + '="' + rs.fieldByName(field) + '")';
 			eval (s);
 		}
 		return entity;
 	};
+	api.find = function(tableName, db, fieldsAndValues) {
+		var findBySQL = "SELECT * FROM " + tableName + " WHERE ";
+		for(fv in fieldsAndValues) {
+			findBySQL += fv + "='" + fieldsAndValues[fv] + "' and ";
+		}
+
+		findBySQL = findBySQL.substr(0, findBySQL.length - 4);
+		print(findBySQL);
+
+		var rs = db.execute(findBySQL);
+		return rs;
+	}
 	return api;
 } ());
 var BaseEntity = function(dbName, tableName, fields) {
@@ -40,7 +53,6 @@ var BaseEntity = function(dbName, tableName, fields) {
 
 	this.db.execute(this.createSQL);
 }
-
 BaseEntity.prototype.save = function() {
 	var insertSQL = "INSERT INTO " + this.tableName + "(" + this.csv + ") VALUES ("
 	for(field in this.fields) {
@@ -95,19 +107,25 @@ BaseEntity.prototype.find = function(id, clauses) {
 
 	var rs = this.db.execute(findSQL);
 	var entity = utils.getValuesFromResultSet(rs, this.fields);
+	rs.close();
 	return entity;
 };
 
 BaseEntity.prototype.findBy = function(fieldsAndValues) {
-	var findBySQL = "SELECT * FROM " + this.tableName + " WHERE ";
-	for(fv in fieldsAndValues) {
-		findBySQL += fv + "='" + fieldsAndValues[fv] + "' and "; 
-	}
-	
-	findBySQL = findBySQL.substr(0, findBySQL.length - 4);
-	print(findBySQL);
-	
-	var rs = this.db.execute(findBySQL);
-	var entity = utils.getValuesFromResultSet(rs);
+	var rs = utils.find(this.tableName, this.db, fieldsAndValues);
+	var entity = utils.getValuesFromResultSet(rs, this.fields);
+	rs.close()
 	return entity;
+};
+
+BaseEntity.prototype.findAllBy = function(fieldsAndValues) {
+	var rslist = utils.find(this.tableName, this.db, fieldsAndValues);
+	var rsData = [];
+	while(rslist.isValidRow()) {
+		var entity = utils.getValuesFromResultSet(rslist, this.fields);
+		rsData.push(entity);
+		rslist.next();
+	}
+	rslist.close();
+	return rsData;
 };

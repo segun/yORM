@@ -1,3 +1,6 @@
 tmp
 build/
 *.jsca
+*.swp
+*.swo
+*.html
