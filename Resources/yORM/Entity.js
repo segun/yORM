@@ -97,90 +97,17 @@ BaseEntity.prototype.find = function(id, clauses) {
 	var entity = utils.getValuesFromResultSet(rs, this.fields);
 	return entity;
 };
-/**
- var Asset = function() {
 
- var db = app.myDB;
- var logging = true;
-
- this.id = "";
- this.assetName = "";
- this.assetPrice = "";
- this.assetLocation = "";
- this.dateCreated = "";
- this.tableName = "";
-
- var createSQL = "CREATE TABLE IF NOT EXISTS assets (" +
- "id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT NULL, " +
- "dateCreated INTEGER, " +
- "assetPrice REAL, " +
- "assetName TEXT, " +
- "assetLocation TEXT" +
- ")";
-
- var selectAllSQL = "SELECT * FROM assets";
-
- var getValuesFromResultSet = function(rs) {
- var asset = new Asset();
- asset.id = rs.fieldByName("id");
- asset.assetName = rs.fieldByName("assetName");
- asset.assetPrice = rs.fieldByName("assetPrice");
- asset.assetLocation = rs.fieldByName("assetLocation");
- return asset;
- };
- this.createTable = function() {
- if(logging) {
- Ti.API.info(createSQL);
- }
- db.execute(createSQL);
- };
- this.save = function() {
- var insertSQL = "INSERT INTO assets (assetName, assetPrice, assetLocation, dateCreated) VALUES ('" +
- this.assetName + "', '" +
- this.assetPrice + "', '" +
- this.assetLocation + "', '" +
- this.dateCreated +
- "')";
- if(logging) {
- Ti.API.info(insertSQL);
- }
- db.execute(insertSQL);
- this.id = db.lastInsertRowId;
- };
-
- this.all = function(clauses) {
- selectAllSQL += clauses;
- if(logging) {
- Ti.API.info(selectAllSQL)
- }
- var rsData = [];
- var rslist = db.execute(selectAllSQL);
- while(rslist.isValidRow()) {
- var asset = getValuesFromResultSet(rslist);
- rsData.push(asset);
- rslist.next();
- }
- rslist.close();
- return rsData;
- };
-
- this.destroy = function() {
- var deleteSQL = "DELETE FROM assets where id = '" + this.id + "'";
- if(logging) {
- Ti.API.info(deleteSQL);
- }
- db.execute(deleteSQL);
- };
- this.find = function(id) {
- var findSQL = "SELECT * FROM assets where id = '" + id + "'";
- if(logging) {
- Ti.API.info(findSQL);
- }
- var rs = db.execute(findSQL);
- var asset = getValuesFromResultSet(rs);
- rs.close();
- return asset;
- }
- return this;
- }
- **/
+BaseEntity.prototype.findBy = function(fieldsAndValues) {
+	var findBySQL = "SELECT * FROM " + this.tableName + " WHERE ";
+	for(fv in fieldsAndValues) {
+		findBySQL += fv + "='" + fieldsAndValues[fv] + "' and "; 
+	}
+	
+	findBySQL = findBySQL.substr(0, findBySQL.length - 4);
+	print(findBySQL);
+	
+	var rs = this.db.execute(findBySQL);
+	var entity = utils.getValuesFromResultSet(rs);
+	return entity;
+};
