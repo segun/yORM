@@ -1,7 +1,6 @@
 var print = function(obj) {
 	Ti.API.info(obj);
 };
-
 var utils = ( function() {
 	var api = {};
 	api.getValuesFromResultSet = function(rs, fields) {
@@ -18,10 +17,12 @@ var utils = ( function() {
 
 var BaseEntity = function(dbName, tableName, fields) {
 	this.db = Titanium.Database.open(dbName);
+	this.tableName = tableName;
+	this.fields = fields;
 
 	this.csv = "";
 	this.createSQL = "CREATE TABLE IF NOT EXISTS " + tableName + "(id INTEGER PRIMARY KEY AUTOINCREMENT DEFAULT NULL, ";
-	for(field in fields) {		
+	for(field in fields) {
 		if(field.indexOf(' ') > 0) {
 			throw "field names can not contain spaces in " + field;
 			break;
@@ -39,54 +40,60 @@ var BaseEntity = function(dbName, tableName, fields) {
 	print(this.createSQL);
 
 	this.db.execute(this.createSQL);
-
-	this.save = function() {
-		var insertSQL = "INSERT INTO " + tableName + "(" + this.csv + ") VALUES ("
-		for(field in fields) {
-			var s = '(a = this.' + field + ')';
-			eval(s);
-			insertSQL += "'" + a + "',";
-		}
-
-		insertSQL = insertSQL.substr(0, insertSQL.length - 1);
-		insertSQL += ")";
-		print(insertSQL);
-		this.db.execute(insertSQL);
-		this.id = this.db.lastInsertRowId;
-	};
-	this.removeAll = function() {
-		var deleteAllSQL = "DELETE FROM " + tableName;
-		print(deleteAllSQL);
-		this.db.execute(deleteAllSQL);
-	};
-	this.remove = function() {
-		var deleteSQL = "DELETE FROM " + tableName + " WHERE id=" + this.id;
-		print(deleteSQL);
-		this.db.execute(deleteSQL);
-		this.id = null;
-		for(field in fields) {
-			eval ( '(this.' + field + '= null)');
-		}
-	};
-	this.all = function(clauses) {
-		var selectAllSQL = "SELECT * FROM " + tableName;
-		if(clauses !== undefined) {
-			selectAllSQL += clauses;
-		}
-		print(selectAllSQL);
-
-		var rsData = [];
-		var rslist = this.db.execute(selectAllSQL);
-		while(rslist.isValidRow()) {
-			var entity = utils.getValuesFromResultSet(rslist, fields);
-			rsData.push(entity);
-			rslist.next();
-		}
-		rslist.close();
-		return rsData;
-	};	
-	return this;
 }
+
+BaseEntity.prototype.save = function() {
+	var insertSQL = "INSERT INTO " + this.tableName + "(" + this.csv + ") VALUES ("
+	for(field in this.fields) {
+		var s = '(a = this.' + field + ')';
+		eval(s);
+		insertSQL += "'" + a + "',";
+	}
+
+	insertSQL = insertSQL.substr(0, insertSQL.length - 1);
+	insertSQL += ")";
+	print(insertSQL);
+	this.db.execute(insertSQL);
+	this.id = this.db.lastInsertRowId;
+};
+
+BaseEntity.prototype.removeAll = function() {
+	var deleteAllSQL = "DELETE FROM " + this.tableName;
+	print(deleteAllSQL);
+	this.db.execute(deleteAllSQL);
+};
+
+BaseEntity.prototype.remove = function() {
+	var deleteSQL = "DELETE FROM " + this.tableName + " WHERE id=" + this.id;
+	print(deleteSQL);
+	this.db.execute(deleteSQL);
+	this.id = null;
+	for(field in this.fields) {
+		eval ( '(this.' + field + '= null)');
+	}
+};
+
+BaseEntity.prototype.all = function(clauses) {
+	var selectAllSQL = "SELECT * FROM " + this.tableName;
+	if(clauses !== undefined) {
+		selectAllSQL += " " + clauses;
+	}
+	print(selectAllSQL);
+
+	var rsData = [];
+	var rslist = this.db.execute(selectAllSQL);
+	while(rslist.isValidRow()) {
+		var entity = utils.getValuesFromResultSet(rslist, this.fields);
+		rsData.push(entity);
+		rslist.next();
+	}
+	rslist.close();
+	return rsData;
+};
+
+this.find = function(id) {
+	var findURL = "SELECT * FROM " + tableName + " WHERE id = '" + id + "'";
+};
 /**
  var Asset = function() {
 
