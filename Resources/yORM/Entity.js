@@ -14,7 +14,6 @@ var utils = ( function() {
 	};
 	return api;
 } ());
-
 var BaseEntity = function(dbName, tableName, fields) {
 	this.db = Titanium.Database.open(dbName);
 	this.tableName = tableName;
@@ -56,13 +55,11 @@ BaseEntity.prototype.save = function() {
 	this.db.execute(insertSQL);
 	this.id = this.db.lastInsertRowId;
 };
-
 BaseEntity.prototype.removeAll = function() {
 	var deleteAllSQL = "DELETE FROM " + this.tableName;
 	print(deleteAllSQL);
 	this.db.execute(deleteAllSQL);
 };
-
 BaseEntity.prototype.remove = function() {
 	var deleteSQL = "DELETE FROM " + this.tableName + " WHERE id=" + this.id;
 	print(deleteSQL);
@@ -72,7 +69,6 @@ BaseEntity.prototype.remove = function() {
 		eval ( '(this.' + field + '= null)');
 	}
 };
-
 BaseEntity.prototype.all = function(clauses) {
 	var selectAllSQL = "SELECT * FROM " + this.tableName;
 	if(clauses !== undefined) {
@@ -90,9 +86,16 @@ BaseEntity.prototype.all = function(clauses) {
 	rslist.close();
 	return rsData;
 };
+BaseEntity.prototype.find = function(id, clauses) {
+	var findSQL = "SELECT * FROM " + this.tableName + " WHERE id = '" + id + "'";
+	if(clauses !== undefined) {
+		findSQL += " " + clauses;
+	}
+	print(findSQL);
 
-this.find = function(id) {
-	var findURL = "SELECT * FROM " + tableName + " WHERE id = '" + id + "'";
+	var rs = this.db.execute(findSQL);
+	var entity = utils.getValuesFromResultSet(rs, this.fields);
+	return entity;
 };
 /**
  var Asset = function() {
