@@ -11,7 +11,7 @@ The entry point is BaseEntity. Write a javascript class that extends BaseEntity 
 This class serves as your Entity class (or a table in database).
 
 e.g
-
+`function UserEntity() { }`
 `UserEntity.prototype = new BaseEntity("BE.db", "user", {'name': 'TEXT','email': 'TEXT','age': 'INTEGER'});`
 
 BaseEntity takes three parameters
@@ -26,6 +26,7 @@ After instantiating UserEntity, you can call the fields passed to the BaseEntity
 
 e.g you can do
 
+`var user = new UserEntity();`
 `user.name = "olu";user.age = 19;user.email = 'olu@dele.com';`
 
 Also an `id` field that auto increments is generated for the entity.
