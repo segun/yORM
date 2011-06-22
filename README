@@ -10,26 +10,48 @@ Usage
 The entry point is BaseEntity. Write a javascript class that extends BaseEntity using prototypes. 
 This class serves as your Entity class (or a table in database).
 
-e.g
-`function UserEntity() { }`
-`UserEntity.prototype = new BaseEntity("BE.db", "user", {'name': 'TEXT','email': 'TEXT','age': 'INTEGER'});`
+###Sample Code
 
-BaseEntity takes three parameters
+####Include the single entity.js file
+`Ti.include('yORM/entity.js');`
 
-> + dbName - The name of the database. You don't have to have opened the db, yORM takes care of that in `this.db = Titanium.Database.open(dbName);`
-> + tableName - The name of the table
-> + fields - An object containing the field names and datatypes.
+####Declare a function like this
+`function UserEntity() {`
 
-You can now get an instance of UserEntity by calling `var user = new UserEntity();`
+`};`
 
-After instantiating UserEntity, you can call the fields passed to the BaseEntity as if they are defined in the UserEntity class.
+####Then extend BaseEntity like this
+`var dbName = "Your Database Name";`
 
-e.g you can do
+`var tableName = "Your Table Name (used in the database)";`
+
+`var fields = {`
+
+`		'field1': 'SQLLite_DataType',`
+
+`		'field2: 'SQLLite_DataType',`
+
+`		'field3: 'SQLLite_DataType'`
+
+`};`
+
+`UserEntity.prototype = new BaseEntity(dbName, tableName, fields);`
 
 `var user = new UserEntity();`
-`user.name = "olu";user.age = 19;user.email = 'olu@dele.com';`
 
-Also an `id` field that auto increments is generated for the entity.
+####The rest is easy
+`var user = new UserEntity();`
+
+`user.field1 = 'field1_value';`
+
+`user.field2 = 'field2_value';`
+
+`user.field2 = 'field3_value';`
+
+`user.save();`
+
+`Ti.API.info(user.id);`
+
 
 Entity Methods.
 > `save()` - _Insert into the table that this entity represents. Call this method after setting the values of the Entity. If you down't set any value, the default is null. The entity's id field is automatically updated with the id of inserted item._
