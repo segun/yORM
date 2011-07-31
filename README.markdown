@@ -13,18 +13,21 @@ This class serves as your Entity class (or a table in database).
 ###Sample Code
 
 **Include the single entity.js file**
+
 ```javascript
 Ti.include('yORM/entity.js');
 ```
 
 **Declare a function like this**
+
 ```javascript
- function UserEntity() {
+function UserEntity() {
  	//add some of your own methods specific to User
- };
+};
 ```
 
 **Then extend BaseEntity like this**
+
 ```javascript
 var dbName = "Your Database Name";
 
@@ -46,6 +49,7 @@ var user = new UserEntity();
 ```
 
 **The rest is easy**
+
 ```javascript
 var user = new UserEntity();
 

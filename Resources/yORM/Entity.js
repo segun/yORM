@@ -4,14 +4,13 @@ var print = function(obj) {
 var yORMUtils = ( function() {
 	var api = {};
 	api.getValuesFromResultSet = function(rs, fields) {
-		var entity = this;
-		entity.id = rs.fieldByName("id");
+		var newEntity = {};
+		newEntity.id = rs.fieldByName("id");
 		for(field in fields) {
-			print(rs.fieldByName(field));
-			var s = '(this.' + field + '="' + rs.fieldByName(field) + '")';
-			eval (s);
+			newEntity[field] = rs.getFieldByName(field);			
+			Ti.API.info(newEntity);
 		}
-		return entity;
+		return newEntity;
 	};
 	api.find = function(tableName, db, fieldsAndValues) {
 		var findBySQL = "SELECT * FROM " + tableName + " WHERE ";
@@ -86,12 +85,13 @@ BaseEntity.prototype.all = function(clauses) {
 	if(clauses !== undefined) {
 		selectAllSQL += " " + clauses;
 	}
+	selectAllSQL += " ORDER BY id"
 	print(selectAllSQL);
 
 	var rsData = [];
 	var rslist = this.db.execute(selectAllSQL);
 	while(rslist.isValidRow()) {
-		var entity = yORMUtils.getValuesFromResultSet(rslist, this.fields);
+		var entity = yORMUtils.getValuesFromResultSet(rslist, this.fields, this);
 		rsData.push(entity);
 		rslist.next();
 	}
