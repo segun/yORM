@@ -8,7 +8,6 @@ var yORMUtils = ( function() {
 		newEntity.id = rs.fieldByName("id");
 		for(field in fields) {
 			newEntity[field] = rs.getFieldByName(field);			
-			Ti.API.info(newEntity);
 		}
 		return newEntity;
 	};
@@ -26,7 +25,8 @@ var yORMUtils = ( function() {
 	}
 	return api;
 } ());
-var BaseEntity = function(dbName, tableName, fields) {
+
+var BaseEntity = function(dbName, tableName, fields, otherDefinitions) {
 	this.db = Titanium.Database.open(dbName);
 	this.tableName = tableName;
 	this.fields = fields;
@@ -47,6 +47,10 @@ var BaseEntity = function(dbName, tableName, fields) {
 	this.csv = this.csv.substr(0, this.csv.length - 1);
 	this.createSQL = this.createSQL.substr(0, this.createSQL.length - 1);
 
+	if(otherDefinitions != null) {
+		this.createSQL += ", " + otherDefinitions
+	}
+	
 	this.createSQL += ")";
 	print(this.createSQL);
 
@@ -84,8 +88,9 @@ BaseEntity.prototype.all = function(clauses) {
 	var selectAllSQL = "SELECT * FROM " + this.tableName;
 	if(clauses !== undefined) {
 		selectAllSQL += " " + clauses;
+	} else {
+		selectAllSQL += " ORDER BY id DESC";
 	}
-	selectAllSQL += " ORDER BY id"
 	print(selectAllSQL);
 
 	var rsData = [];
